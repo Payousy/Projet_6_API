@@ -1,46 +1,69 @@
-const Thing = require("../models/thing");
+const Sauce = require("../models/thing");
 
+const fs = require("fs");
 /// Créer un Objet (sauce)
-exports.createThing = (req, res, next) => {
-  delete req.body._id;
-  const thing = new Thing({
-    ...req.body,
+exports.createSauce = (req, res, next) => {
+  const sauceObject = JSON.parse(req.body.sauce);
+  delete sauceObject._id;
+  const sauce = new Sauce({
+    ...sauceObject,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${
+      req.file.filename
+    }`,
   });
-
-  thing
+  console.log(req.body.sauce);
+  sauce
     .save()
-    .then(() => res.status(201).json({ message: "Objet enregistré !" }))
+    .then(() => res.status(201).json({ message: "Sauce enregistrée !" }))
     .catch(() => res.status(400).json({ error }));
 };
 
 ///Modification d'un objet (sauce)
 
-exports.modifyThing = (req, res, next) => {
-  Thing.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+exports.modifySauce = (req, res, next) => {
+  const sauceObject = req.file
+    ? {
+        ...JSON.parse(req.body.sauce),
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`,
+      }
+    : { ...req.body };
+  Sauce.updateOne(
+    { _id: req.params.id },
+    { ...sauceObject, _id: req.params.id }
+  )
     .then(() => res.status(200).json({ message: "Objet modifié !" }))
     .catch(() => res.status(400).json({ error }));
 };
 
 //// Supprimer un Objet (sauce)
 
-exports.deleteThing = (req, res, next) => {
-  Thing.deleteOne({ _id: req.params.id })
-    .then(() => res.status(200).json({ message: "Objet modifié !" }))
-    .catch(() => res.status(400).json({ error }));
+exports.deleteSauce = (req, res, next) => {
+  Sauce.findOne({ _id: req.params.id })
+    .then((sauce) => {
+      const filename = sauce.imageUrl.split("/images/")[1];
+      fs.unlink(`images/${filename}`, () => {
+        Sauce.deleteOne({ _id: req.params.id })
+          .then(() => res.status(200).json({ message: "Objet supprimé !" }))
+          .catch((error) => res.status(400).json({ error }));
+      });
+    })
+    .catch((error) => res.status(500).json({ error }));
 };
 
 /// Récupérer un seul Objet (sauce)
 
-exports.getOneThing = (req, res, next) => {
-  Thing.findOne({ _id: req.params.id })
-    .then((thing) => res.status(200).json(thing))
+exports.getOneSauce = (req, res, next) => {
+  Sauce.findOne({ _id: req.params.id })
+    .then((sauce) => res.status(200).json(sauce))
     .catch((error) => res.status(404).json({ error }));
 };
 
 /// Récupérer tous les Objets (sauces)
 
-exports.getAllThings = (req, res, next) => {
-  Thing.find()
-    .then((things) => res.status(200).json(things))
+exports.getAllSauces = (req, res, next) => {
+  Sauce.find()
+    .then((sauces) => res.status(200).json(sauces))
     .catch((error) => res.status(400).json({ error }));
 };
