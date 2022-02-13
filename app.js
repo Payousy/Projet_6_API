@@ -7,18 +7,6 @@ const path = require("path");
 const saucesRoutes = require("./routes/sauces");
 const userRoutes = require("./routes/user");
 
-mongoose
-  .connect(
-    "mongodb+srv://FatherYou:Entrer1856@cluster0.h9eig.mongodb.net/Api_project?retryWrites=true&w=majority",
-
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
-  .then(() => console.log("Connexion à MongoDB a réussie !"))
-  .catch(() => console.log("Connexion à MongoDB a échoué !"));
-
 app.use(express.json());
 
 app.use((req, res, next) => {
