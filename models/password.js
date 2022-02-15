@@ -1,4 +1,4 @@
-/*const passwordValidator = require("password-validator");
+const passwordValidator = require("password-validator");
 
 const passwordSchema = new passwordValidator();
 
@@ -17,4 +17,4 @@ passwordSchema
   .not()
   .spaces();
 
-module.exports = passwordSchema;*/
+module.exports = passwordSchema;

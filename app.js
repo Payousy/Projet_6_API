@@ -1,12 +1,13 @@
 const express = require("express");
+//const helmet = require("helmet");
 const bodyParser = require("body-parser");
 const app = express();
-const mongoose = require("mongoose");
+//const mongoose = require("mongoose");
 const path = require("path");
 
 const saucesRoutes = require("./routes/sauces");
 const userRoutes = require("./routes/user");
-
+//app.use(helmet());
 app.use(express.json());
 
 app.use((req, res, next) => {
